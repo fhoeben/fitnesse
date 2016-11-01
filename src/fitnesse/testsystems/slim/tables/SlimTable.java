@@ -108,6 +108,17 @@ public abstract class SlimTable {
     }
   }
 
+  protected SlimTestResult formatSymbolAssignment(String name, String actual) {
+    String html = String.format("<div><details class=\"symbolAssign\">" +
+                                    "<summary class=\"symbolName\" title=\"%2$s\">" +
+                                        "$<span>%1$s</span>=" +
+                                    "</summary>" +
+                                  "<span class=\"symbolValue\">%2$s</span>" +
+                                "</details></div>",
+                                name, actual);
+    return SlimTestResult.ignore(html);
+  }
+
   public Map<String, String> getSymbolsToStore() {
     return symbolsToStore;
   }
@@ -320,7 +331,12 @@ public abstract class SlimTable {
 
     @Override
     protected String formatSymbolValue(String name, String value) {
-      return String.format("$%s->[%s]", name, value);
+      return String.format("<details class=\"symbolUsage\">" +
+                              "<summary class=\"symbolName\" title=\"%2$s\">" +
+                                "$<span>%1$s</span>" +
+                              "</summary>" +
+                              "<span class=\"symbolValue\">%2$s</span>" +
+                            "</details>", name, value);
     }
   }
 
@@ -386,7 +402,7 @@ public abstract class SlimTable {
     @Override
     protected SlimTestResult createEvaluationMessage(String actual, String expected) {
       setSymbol(symbolName, actual);
-      return SlimTestResult.plain(String.format("$%s<-[%s]", symbolName, actual));
+      return formatSymbolAssignment(symbolName, actual);
     }
   }
 
@@ -454,7 +470,7 @@ public abstract class SlimTable {
     protected SlimTestResult createEvaluationMessage(String actual, String expected) {
       if (assignToName != null) {
         setSymbol(assignToName, actual);
-        return SlimTestResult.plain(String.format("$%s<-[%s]", assignToName, actual));
+        return formatSymbolAssignment(assignToName, actual);
       }else{
         return super.createEvaluationMessage(actual, expected);
       }
