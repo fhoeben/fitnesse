@@ -1,5 +1,9 @@
 !2 ${FITNESSE_VERSION}
 
+!2 20190428
+ * Issues fixed:
+  * Improved error message when Slim 'script' table has row with too few columns ([[1221][https://github.com/unclebob/fitnesse/issues/1221]])
+
 !2 20190421
  * Issues fixed:
   * Fix table of contents for suites containing symbolic links to multiple external roots ([[1218][https://github.com/unclebob/fitnesse/pull/1218]])
