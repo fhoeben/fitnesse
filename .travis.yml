@@ -12,7 +12,13 @@ jdk:
   - openjdk8
   - oraclejdk9
 
-matrix:
+env:
+  - PARTITION_INDEX=0 PARTITION_COUNT=2
+  - PARTITION_INDEX=1 PARTITION_COUNT=2
+
+jobs:
   include:
     - dist: trusty
       jdk: oraclejdk8
+      env:
+        - PARTITION_INDEX=0 PARTITION_COUNT=1

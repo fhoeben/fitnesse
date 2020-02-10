@@ -32,6 +32,10 @@ version = new Date().format('yyyyMMdd')
 
 println "Building FitNesse v${project.version}..."
 
+def partitionCount = System.getenv("PARTITION_COUNT") == null ? 1 : Integer.parseInt(System.getenv("PARTITION_COUNT"))
+def partitionIndex = System.getenv("PARTITION_INDEX") == null ? -1 : Integer.parseInt(System.getenv("PARTITION_INDEX"))
+
+
 repositories {
   mavenCentral()
 }
@@ -207,7 +211,7 @@ task acceptanceTest(type: JavaExec) {
   onlyIf { test.didWork }
   classpath = standaloneJar.outputs.files
   main "fitnesseMain.FitNesseMain"
-  args "-o", "-c", "FitNesse.SuiteAcceptanceTests?suite&format=text"
+  args "-o", "-c", "FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=${partitionCount}&partitionIndex=${partitionIndex}"
 }
 
 check.dependsOn acceptanceTest
