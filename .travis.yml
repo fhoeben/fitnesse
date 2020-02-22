@@ -5,6 +5,10 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.cache/google-cloud-tools-java/jib/
+
+services:
+  - docker
 
 language: java
 
@@ -12,13 +16,7 @@ jdk:
   - openjdk8
   - oraclejdk9
 
-env:
-  - PARTITION_INDEX=0 PARTITION_COUNT=2
-  - PARTITION_INDEX=1 PARTITION_COUNT=2
-
 jobs:
   include:
     - dist: trusty
       jdk: oraclejdk8
-      env:
-        - PARTITION_INDEX=0 PARTITION_COUNT=1

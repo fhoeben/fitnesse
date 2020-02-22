@@ -24,6 +24,7 @@ plugins {
   id "maven-publish"
   id "com.jfrog.bintray" version "1.8.4"
   id "com.github.ben-manes.versions" version "0.27.0"
+  id 'com.google.cloud.tools.jib' version '2.0.0'
 }
 
 apply plugin: "info.solidsoft.pitest"
@@ -31,10 +32,6 @@ apply plugin: "info.solidsoft.pitest"
 version = new Date().format('yyyyMMdd')
 
 println "Building FitNesse v${project.version}..."
-
-def partitionCount = System.getenv("PARTITION_COUNT") == null ? 1 : Integer.parseInt(System.getenv("PARTITION_COUNT"))
-def partitionIndex = System.getenv("PARTITION_INDEX") == null ? -1 : Integer.parseInt(System.getenv("PARTITION_INDEX"))
-
 
 repositories {
   mavenCentral()
@@ -171,6 +168,30 @@ jar {
   }
 }
 
+task copyResources(type: Copy) {
+  dependsOn createUpdateLists
+  into('Resources') {
+    from('.') {
+      include createUpdateLists.wikiFiles as String[]
+    }
+  }
+  from {
+    (configurations.compile - configurations.optional).collect { zipTree(it) }
+  } {
+    exclude 'META-INF/**'
+  }
+  duplicatesStrategy = 'exclude'
+  into sourceSets.main.output.resourcesDir
+}
+
+jib {
+  to {
+    image = 'fitnesse'
+  }
+}
+
+tasks.jibDockerBuild.dependsOn copyResources
+
 task standaloneJar(type: Jar) {
   dependsOn jar
   archiveBaseName = 'fitnesse'
@@ -206,13 +227,12 @@ task slimJar(type: Jar) {
   }
 }
 
-task acceptanceTest(type: JavaExec) {
+task acceptanceTest(type: Exec) {
   mustRunAfter test
   onlyIf { test.didWork }
-  classpath = standaloneJar.outputs.files
-  main "fitnesseMain.FitNesseMain"
-  args "-o", "-c", "FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=${partitionCount}&partitionIndex=${partitionIndex}"
+  commandLine "./acceptance-tests-in-docker.sh"
 }
+acceptanceTest.dependsOn jibDockerBuild
 
 check.dependsOn acceptanceTest
 

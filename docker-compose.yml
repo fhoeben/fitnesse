@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  fitnesse-1:
+    image: fitnesse:latest
+    command: ['-o', '-d', '/app/classes/Resources', '-c', 'FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=2&partitionIndex=0']
+
+  fitnesse-2:
+    image: fitnesse:latest
+    command: ['-o', '-d', '/app/classes/Resources', '-c', 'FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=2&partitionIndex=1']
+
+#  fitnesse-3:
+#    image: fitnesse:latest
+#    command: ['-o', '-c', 'FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=4&partitionIndex=2']
+#
+#  fitnesse-4:
+#    image: fitnesse:latest
+#    command: ['-o', '-c', 'FitNesse.SuiteAcceptanceTests?suite&format=text&partitionCount=4&partitionIndex=3']
