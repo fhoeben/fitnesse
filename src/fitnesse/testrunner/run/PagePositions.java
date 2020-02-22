@@ -132,22 +132,27 @@ public class PagePositions {
   }
 
   protected void appendHeader(Writer writer, String groupSep) throws IOException {
-    writer.append(PAGE_HEADER).append(groupSep);
-    writer.append(String.join(groupSep, groupNames));
-    writer.append(groupSep);
-    writer.append(ORDER_HEADER);
-    writer.append(lineSep);
+    StringBuilder sb = new StringBuilder();
+    sb.append(PAGE_HEADER).append(groupSep);
+    sb.append(String.join(groupSep, groupNames));
+    sb.append(groupSep);
+    sb.append(ORDER_HEADER);
+    sb.append(lineSep);
+    writer.append(sb.toString());
   }
 
   protected void appendIndices(Writer writer, String page, List<PagePosition> indices, String groupSep) throws IOException {
+    StringBuilder sb = new StringBuilder();
     for (PagePosition index : indices) {
-      writer.append(page)
+      sb.append(page)
         .append(groupSep);
       for (Object dimension : index.getGroup()) {
         String dimensionStr = formatDimension(dimension);
-        writer.append(dimensionStr).append(groupSep);
+        sb.append(dimensionStr).append(groupSep);
       }
-      writer.append(Integer.toString(index.getPositionInGroup())).append(lineSep);
+      sb.append(index.getPositionInGroup()).append(lineSep);
+      writer.append(sb.toString());
+      sb.setLength(0);
     }
   }
 

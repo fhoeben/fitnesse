@@ -6,12 +6,9 @@ import fitnesse.http.Response;
 import fitnesse.responders.ChunkingResponder;
 import fitnesse.testrunner.SuiteContentsFinder;
 import fitnesse.testrunner.SuiteFilter;
-import fitnesse.testrunner.WikiPageIdentity;
-import fitnesse.testrunner.run.PagePosition;
 import fitnesse.testrunner.run.PagePositions;
 import fitnesse.wiki.WikiPage;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
@@ -43,26 +40,6 @@ public class PartitionPreviewResponder extends ChunkingResponder {
     SuiteContentsFinder suiteTestFinder = new SuiteContentsFinder(page, filter, root);
     List<WikiPage> allPages = suiteTestFinder.getAllPagesToRunForThisSuite();
     return applyPartition(allPages);
-  }
-
-  protected void appendIndices(Writer writer, WikiPage page, List<PagePosition> indices) throws IOException {
-    for (PagePosition index : indices) {
-      writer.append(page.getFullPath().toString())
-        .append('\t');
-      for (Object dimension : index.getGroup()) {
-        String dimensionStr = formatDimension(dimension);
-        writer.append(dimensionStr).append('\t');
-      }
-      writer.append(Integer.toString(index.getPositionInGroup())).append('\n');
-    }
-  }
-
-  protected String formatDimension(Object dimension) {
-    if (dimension instanceof WikiPageIdentity) {
-      return ((WikiPageIdentity) dimension).testSystem();
-    } else {
-      return String.valueOf(dimension);
-    }
   }
 
   protected PagePositions applyPartition(List<WikiPage> pages) {
